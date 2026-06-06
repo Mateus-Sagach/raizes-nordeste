@@ -1,0 +1,2 @@
+ALTER TABLE unidades
+ALTER COLUMN estado TYPE VARCHAR(2);
