@@ -34,7 +34,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PedidoService {git commit --amend
+public class PedidoService {
 
     private final PedidoRepository pedidoRepository;
     private final UnidadeRepository unidadeRepository;
