@@ -1,0 +1,1276 @@
+{
+  "info": {
+    "_postman_id": "8f66be4f-7283-4370-80e3-513ab53d3a3f",
+    "name": "Raizes do Nordeste",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50135904",
+    "_collection_link": "https://go.postman.co/collection/50135904-8f66be4f-7283-4370-80e3-513ab53d3a3f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "01 - Auth",
+      "item": [
+        {
+          "name": "Cadastro CLIENTE",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = new Date().getTime();\r",
+                  "const email = \"cliente.\" + timestamp + \"@raizes.com\";\r",
+                  "pm.environment.set(\"email_cliente_teste\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cadastro deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"Cliente Teste\",\r\n  \"email\": \"{{email_cliente_teste}}\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"CLIENTE\",\r\n  \"consentimentoLgpd\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/cadastro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "description": "Cria um usuário com perfil CLIENTE para os testes.\n\nPré-condições:  \n\\- Nenhuma(endpoint público)  \n\\- Email único gerado automaticamente com timestamp  \nno Pre-request Script para evitar conflitos\n\nResultado esperado :  \n\\- 201 Created com dados do usuário criado  \n\\- senhaHash não aparece na resposta"
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro GERENTE",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = new Date().getTime();\r",
+                  "const email = \"gerente.\" + timestamp + \"@raizes.com\";\r",
+                  "pm.environment.set(\"email_gerente_teste\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cadastro deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"Gerente Teste\",\r\n  \"email\": \"{{email_gerente_teste}}\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"GERENTE\",\r\n  \"consentimentoLgpd\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/cadastro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "description": "Cria um usuário com perfil GERENTE para os testes  \nque exigem perfil operacional.\n\nPré-condições:\n\n- Nenhuma (endpoint público)\n    \n- Email único gerado automaticamente com timestamp  \n    no Pre-request Script para evitar conflitos\n    \n\nResultado esperado:\n\n- 201 Created com dados do usuário criadoo"
+          },
+          "response": []
+        },
+        {
+          "name": "T01 - Login válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response deve conter accessToken\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.accessToken).to.not.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Perfil deve ser CLIENTE\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.user.perfil).to.equal(\"CLIENTE\");\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 200) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.environment.set(\"token\", resposta.accessToken);\r",
+                  "    pm.environment.set(\"token_cliente\", resposta.accessToken);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{email_cliente_teste}}\",\r\n  \"senha\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica o usuário CLIENTE e retorna o token JWT.  \nSalva o token automaticamente nas variáveis  \ntoken e token_cliente do ambiente.\n\nPré-condições :\n\n- Usuário CLIENTE criado pelo Cadastro CLIENTE\n    \n- Email disponível na variável email_cliente_teste\n    \n\nResultado esperado :\n\n- 200 OK com accessToken, tokenType e expiresIn dados do usuário\n    \n- Variáveis token e token_cliente preenchidas automaticamente"
+          },
+          "response": []
+        },
+        {
+          "name": "Login GERENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login GERENTE deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 200) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.environment.set(\"token_gerente\", resposta.accessToken);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{email_gerente_teste}}\",\r\n  \"senha\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica o usuário GERENTE e salva o token_gerente  \nautomaticamente para uso nos testes operacionais.\n\nPré-condições :\n\n- Usuário GERENTE criado pelo Cadastro GERENTE\n    \n- Email disponível na variável email_gerente_teste\n    \n\nResultado esperado :\n\n- 200 OK com accesssToken\n    \n- Variável token_gerente preenchida automaticamente"
+          },
+          "response": []
+        },
+        {
+          "name": "Login CLIENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.environment.set(\"token_cliente\", resposta.accessToken);\r",
+                  "    console.log(\"Token CLIENTE salvo!\");\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"teste@raizes.com\",\r\n  \"senha\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica o usuário CLIENTE e salva o token_cliente  \nautomaticamente para uso nos testes .\n\nPré-condições:\n\n- Usuário CLIENTE criado pelo Cadastro CLIENTE\n    \n- Email disponível na variável email_cliente_teste\n    \n\nResultado esperado:\n\n- 200 OK com accessToken\n    \n- Variável token_cliente preenchida automaticamente"
+          },
+          "response": []
+        },
+        {
+          "name": "Meu perfil",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Nao deve expor senhaHash\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.senhaHash).to.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Perfil deve ser CLIENTE\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.perfil).to.equal(\"CLIENTE\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Retorna os dados do usuário atualmente autenticado.  \nVerifica que dados sensíveis não são expostos.\n\nPré-condições :\n\n- Token CLIENTE válido em token_cliente\n    \n\nResultado esperado:\n\n- 200 OK com id, nome, email, perfil, ativo, consentimentoLgpd\n    \n- Campo senhaHash ausente da resposta(proteção LGPD)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 -Pedidos",
+      "item": [
+        {
+          "name": "T04 - Criar pedido valido APP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"canalPedido deve ser APP\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.canalPedido).to.equal(\"APP\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve ter itens no pedido\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.itens.length).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.environment.set(\"pedidoId\", resposta.pedidoId);\r",
+                  "    console.log(\"pedidoId salvo: \" + resposta.pedidoId);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"canalPedido\": \"APP\",\r\n  \"itens\": [\r\n    {\"produtoId\": 1, \"quantidade\": 1}\r\n  ],\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Cria um pedido válido com canalPedido APP.\n\nPré-condições:  \n\\- Usuário CLIENTE autenticado (token_cliente)  \n\\- Produto 1 disponível na unidade 1\n\nResultado esperado:  \n\\- 201 Created  \n\\- Status EM_PREPARACAO se pedidoId par (pagamento aprovado)  \n\\- Status AGUARDANDO_PAGAMENTO se pedidoId ímpar (pagamento recusado)"
+          },
+          "response": []
+        },
+        {
+          "name": "T07 - Filtrar pedidos por canal APP",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Todos os pedidos devem ser do canal APP\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    resposta.content.forEach(function(pedido) {\r",
+                  "        pm.expect(pedido.canalPedido).to.equal(\"APP\");\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Resposta deve ser paginada\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.totalElements).to.not.be.undefined;\r",
+                  "    pm.expect(resposta.totalPages).to.not.be.undefined;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos?canalPedido=APP",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ],
+              "query": [
+                {
+                  "key": "canalPedido",
+                  "value": "APP",
+                  "type": "text"
+                }
+              ]
+            },
+            "description": "Lista pedidos filtrando pelo canal APP com paginação.  \nVerifica que o filtro está funcionando corretamente.\n\nPré-condições :\n\n- Token GERENTE válido em token_gerente\n    \n- Pelo menos um pedido criado com canalPedido APP\n    \n\nResultado esperado:\n\n- 200 OK com lista pagiinada\n    \n- Todos os pedidos retornados com canalPedido igual a APP\n    \n- Campos de paginação presentes: totalElements, totalPages, size"
+          },
+          "response": []
+        },
+        {
+          "name": "T08 - Buscar pedido por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ID do pedido deve ser o mesmo do solicitado\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    const pedidoIdEsperado = parseInt(\r",
+                  "        pm.environment.get(\"pedidoId\"));\r",
+                  "    pm.expect(resposta.pedidoId).to.equal(pedidoIdEsperado);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagamento deve estar preenchido\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.pagamento).to.not.be.null;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos/{{pedidoId}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "{{pedidoId}}"
+              ]
+            },
+            "description": "Busca o pedido criado no T04 pelo ID salvo automaticamente.  \nVerifica detalhes completos incluindo pagamento.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Variável pedidoId preenchida pelo T04\n    \n\nResultado esperado :\n\n- 200 OK com todos os campos do pedido\n    \n- Pagamento preenchido com status APROVADO ou então RECUSADO\n    \n- ID do pedido igual ao solicitado"
+          },
+          "response": []
+        },
+        {
+          "name": "T10a - Criar pedido para atualizar status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.environment.set(\"pedidoIdStatus\", resposta.pedidoId);\r",
+                  "    console.log(\"pedidoIdStatus salvo: \" + resposta.pedidoId);\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"canalPedido\": \"APP\",\r\n  \"itens\": [\r\n    {\"produtoId\": 2, \"quantidade\": 1}\r\n  ],\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Cria um pedido exclusivo para o teste de cancelamento.  \nUsa canalPedido TOTEM para diferenciar dos outros testes.  \nSalva pedidoIdStatus separado para não interferir diretamente no pedidoId principal.\n\nPré-condições :\n\n- Token CLIENTE válido em token_cliente\n    \n- Produto 2 disponível na unidade 1\n    \n\nResultado esperado:\n\n- 201 Created\n    \n- Variável pedidoIdStatus preenchida automaticamente"
+          },
+          "response": []
+        },
+        {
+          "name": "T10b - Atualizar status para CANCELADO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Status deve ser CANCELADO\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.statusAtual).to.equal(\"CANCELADO\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"CANCELADO\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos/{{pedidoIdStatus}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "{{pedidoIdStatus}}",
+                "status"
+              ]
+            },
+            "description": "Cancela o pedido criado no T10a alterando o status para CANCELADO  \nvia PATCH /pedidos/{id}/status.  \nDemonstra que a máquina de estados aceita a transição para CANCELADO  \na partir de qualquer status ativo.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Variável pedidoIdStatus preenchida pelo T10a\n    \n- Pedido deve estar em status AGUARDANDO_PAGAMENTO  \n    ou EM_PREPARACAO (não pode já estar CANCELADO)\n    \n\nResultado esperado:\n\n- 200 OK\n    \n- statusAnterior com o status anterior do pedido\n    \n- statusAtual igual a CANCELADO\n    \n- atualizadoEm com o timestamp da alteração"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Estoque",
+      "item": [
+        {
+          "name": "T12 - Entrada de estoque",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Quantidade deve ser maior que zero\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.quantidade).to.be.above(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve retornar o id do estoque\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.id).to.not.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve retornar o nome do produto\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.nomeProduto).to.not.be.undefined;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"produtoId\": 1,\r\n  \"quantidade\": 50,\r\n  \"observacao\": \"Reposicao de estoque\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/estoque/entrada",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "estoque",
+                "entrada"
+              ]
+            },
+            "description": "Registra entrada de 50 unidades do produto 1 na unidade 1.  \nReabastece o estoque consumido pelos testes de pedidos.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Produto 1 e unidade 1 existentess no banco\n    \n\nResultado esperado :\n\n- 201 Created com dados atualizados do estoque\n    \n- Quantidade maior que zero\n    \n- Nome do produto presente na resposta RECEBIDA"
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar estoque unidade 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve retornar lista de produtos\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.length).to.be.above(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/estoque?unidadeId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "estoque"
+              ],
+              "query": [
+                {
+                  "key": "unidadeId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Lista todos os produtos em estoque da unidade 1.  \nVerifica que o estoque está sendo controlado por unidade.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Unidade 1 existente no banco\n    \n\nResultado esperado:\n\n- 200 OK com lista de produtos\n    \n- Cada item com quantidade, quantidadeMinima e alertaReposicao"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Fidelidade",
+      "item": [
+        {
+          "name": "T13 - Consultar saldo de pontos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve ter saldoPontos\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.saldoPontos).to.not.be.undefined;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve ter consentimentoAtivo\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.consentimentoAtivo).to.be.true;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/fidelidade/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "fidelidade",
+                "me"
+              ]
+            },
+            "description": "Consulta o programa de fidelidade do cliente autenticado.  \nVerifica acúmulo de pontos após pedidos aprovados.\n\nPré-condições:\n\n- Token CLIENTE válido em token_cliente\n    \n- Cliente com consentimentoLgpd true\n    \n- Pelo menos um pedido aprovado criado anteriormente\n    \n\nResultado esperado:\n\n- 200 OK com id, clienteId, nomeCliente, saldoPontos,  \n    totalAcumulado e consentimentoAtivo\n    \n- consentimentoAtivo igual a true"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Erros e Negativos",
+      "item": [
+        {
+          "name": "T02 - Acesso sem token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 401\", function() {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Erro deve ser NAO_AUTENTICADO\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.error).to.equal(\"NAO_AUTENTICADO\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Testa acesso a endpoint protegido sem enviar token JWT.  \nVerifica que a API rejeita requisições não autenticadas..\n\nPré-condições:\n\n- Nenhuma (Authorization: No Auth)\n    \n\nResultado esperado:\n\n- 401 Unauthorized\n    \n- error: NAO_AUTENTICADO\n    \n- message: Token ausente ou invalido"
+          },
+          "response": []
+        },
+        {
+          "name": "T03 - Perfil sem permissao (403)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"CLIENTE nao pode acessar estoque (403)\", function() {\r",
+                  "    pm.response.to.have.status(403);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Erro deve ser ACESSO_NEGADO\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.error).to.equal(\"ACESSO_NEGADO\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/estoque?unidadeId=1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "estoque"
+              ],
+              "query": [
+                {
+                  "key": "unidadeId",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "CLIENTE tenta acessar endpoint restrito a GERENTE/ADMIN.  \nVerifica que o controle de perfis está funcionando.\n\nPré-condições:\n\n- Token CLIENTE válido em token_cliente\n    \n- CLIENTE não tem permissão para acessar /estoque\n    \n\nResultado esperado:\n\n- 403 Forbidden\n    \n- error: ACESSO_NEGADO\n    \n- message: Voce nao tem permissao para esta acao"
+          },
+          "response": []
+        },
+        {
+          "name": "T05 - Sem canalPedido (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 422\", function() {\r",
+                  "    pm.response.to.have.status(422);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Erro deve ser ERRO_VALIDACAO\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.error).to.equal(\"ERRO_VALIDACAO\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deve indicar campo canalPedido\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    const campoErro = resposta.details.find(\r",
+                  "        d => d.field === \"canalPedido\"\r",
+                  "    );\r",
+                  "    pm.expect(campoErro).to.not.be.undefined;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"itens\": [\r\n    {\"produtoId\": 1, \"quantidade\": 1}\r\n  ],\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Cria pedido sem informar o campo obrigatório canalPedido.  \nVerifica que a validação de campos funciona corretamente.\n\nPré-condições:\n\n- Token CLIENTE válido em token_cliente\n    \n\nResultado esperado:\n\n- 422 Unprocessable Entity\n    \n- error: ERRO_VALIDACAO\n    \n- details com field canalPedido e mensagem de obrigatoriedade"
+          },
+          "response": []
+        },
+        {
+          "name": "T06 - Estoque insuficiente (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 409\", function() {\r",
+                  "    pm.response.to.have.status(409);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Erro deve ser ESTOQUE_INSUFICIENTE\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.error).to.equal(\"ESTOQUE_INSUFICIENTE\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"canalPedido\": \"APP\",\r\n  \"itens\": [\r\n    {\"produtoId\": 1, \"quantidade\": 999999999}\r\n  ],\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Tenta criar pedido com quantidade que excede o estoque disponível.  \nVerifica que a validação de estoque bloqueia o pedido.\n\nPré-condições:\n\n- Token CLIENTE válido em token_cliente\n    \n- Quantidade 999999999 que vai excede qualquer estoque\n    \n\nResultado esperado:\n\n- 409 Conflict\n    \n- error: ESTOQUE_INSUFICIENTE\n    \n- Pedido não é criado e estoque não é alterado"
+          },
+          "response": []
+        },
+        {
+          "name": "T09 - Pagamento recusado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 201\", function() {\r",
+                  "    pm.response.to.have.status(201);\r",
+                  "});\r",
+                  "\r",
+                  "if (pm.response.code === 201) {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    const pedidoId = resposta.pedidoId;\r",
+                  "    const isPar = pedidoId % 2 === 0;\r",
+                  "\r",
+                  "    pm.test(\"Verificar resultado do pagamento mock\", function() {\r",
+                  "        if (isPar) {\r",
+                  "            pm.expect(resposta.pagamento.status)\r",
+                  "                .to.equal(\"APROVADO\");\r",
+                  "            console.log(\"Pedido par - pagamento APROVADO\");\r",
+                  "        } else {\r",
+                  "            pm.expect(resposta.pagamento.status)\r",
+                  "                .to.equal(\"RECUSADO\");\r",
+                  "            console.log(\"Pedido impar - pagamento RECUSADO\");\r",
+                  "        }\r",
+                  "    });\r",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_cliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"unidadeId\": 1,\r\n  \"canalPedido\": \"BALCAO\",\r\n  \"itens\": [\r\n    {\"produtoId\": 2, \"quantidade\": 1}\r\n  ],\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos"
+              ]
+            },
+            "description": "Cria pedido e verifica o comportamento do mock de pagamento.  \nDemonstra que a API trata corretamente pagamentos recusados.\n\nPré-condições:\n\n- Token CLIENTE válido em token_cliente\n    \n- Produto 2 disponível na unidade 1\n    \n\nResultado esperado:\n\n- 201 Created\n    \n- Se pedidoId par: pagamento APROVADO, status EM_PREPARACAO\n    \n- Se pedidoId ímpar: pagamento RECUSADO, status AGUARDANDO_PAGAMENTO"
+          },
+          "response": []
+        },
+        {
+          "name": "T11 - Email ja cadastrado (409)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const emailCliente = pm.environment.get(\"email_cliente_teste\");\r",
+                  "pm.environment.set(\"email_duplicado_teste\", emailCliente);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 409 ou 500\", function() {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([409, 500]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"nome\": \"Usuario Duplicado\",\r\n  \"email\": \"{{email_duplicado_teste}}\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"CLIENTE\",\r\n  \"consentimentoLgpd\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/cadastro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "description": "Tenta cadastrar um usuário com email que já existe no banco.  \nVerifica que a API impede duplicidade de cadastros.\n\nPré-condições:\n\n- Email do cliente já cadastrado pelo Cadastro CLIENTE\n    \n- Variável email_cliente_teste com o email já usado\n    \n\nResultado esperado:\n\n- 409 Conflict\n    \n- error: EMAIL__JA_CADASTRADO"
+          },
+          "response": []
+        },
+        {
+          "name": "T14 - Transicao de status invalida (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Deve retornar 400\", function() {\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Erro deve ser TRANSICAO_STATUS_INVALIDA\", function() {\r",
+                  "    const resposta = pm.response.json();\r",
+                  "    pm.expect(resposta.error)\r",
+                  "        .to.equal(\"TRANSICAO_STATUS_INVALIDA\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token_gerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"status\": \"EM_PREPARACAO\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/pedidos/{{pedidoIdStatus}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "pedidos",
+                "{{pedidoIdStatus}}",
+                "status"
+              ]
+            },
+            "description": "Tenta mover um pedido CANCELADO para EM_PREPARACAO.  \nVerifica que a máquina de estados rejeita transições inválidas.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Variável pedidoIdStatus com pedido já CANCELADO pelo T10\n    \n\nResultado esperado:\n\n- 400 Bad Request\n    \n- error: TRANSICAO_STATUS_INVALIDA\n    \n- Mensagem indicando que a transição não é permitida"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
