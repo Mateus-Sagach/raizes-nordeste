@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Autenticacao",
-        description = "Login, cadastro e perfil do usuario")
+        description = "Login, cadastro e  perfil do usuario")
 public class AuthController {
 
     private final AuthService authService;
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/cadastro")
-    @Operation(summary = "Cadastra um novo usuario")
+    @Operation(summary = "Cadastra  um novo usuario")
     public ResponseEntity<UsuarioResponse> cadastrar(
             @RequestBody @Valid CriarUsuarioRequest req) {
 
@@ -49,7 +49,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Retorna os dados do usuario autenticado")
+    @Operation(summary = "Retorna os dados do usuario  autenticado")
     public ResponseEntity<UsuarioResponse> meuPerfil(
             @AuthenticationPrincipal UserDetails userDetails) {
 

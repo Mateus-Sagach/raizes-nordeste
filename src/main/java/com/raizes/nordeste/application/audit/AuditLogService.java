@@ -17,7 +17,7 @@ public class AuditLogService {
     @Async
     public void registrar(Usuario usuario,
                           String acao,
-                          String entidade,
+                           String entidade,
                           Long entidadeId) {
 
         AuditLog log = new AuditLog();

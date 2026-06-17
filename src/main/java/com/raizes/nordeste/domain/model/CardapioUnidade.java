@@ -34,7 +34,7 @@ public class CardapioUnidade {
     @Column(nullable = false)
     private Boolean disponivel = true;
 
-    // Regra de negócio — produto só pode ser vendido se disponível
+    //produto só pode ser vendido se disponível
     public boolean isDisponivelParaVenda() {
         return this.disponivel && this.produto.getDisponivel();
     }

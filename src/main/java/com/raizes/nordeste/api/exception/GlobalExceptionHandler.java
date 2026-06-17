@@ -130,7 +130,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(ErroResponse.of(
                         "CREDENCIAIS_INVALIDAS",
-                        "Email ou senha invalidos.",
+                        "Email ou senha estao  invalidos.",
                         request.getRequestURI()));
     }
 

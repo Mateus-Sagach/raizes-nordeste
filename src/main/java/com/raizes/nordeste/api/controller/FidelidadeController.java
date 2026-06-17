@@ -45,7 +45,7 @@ public class FidelidadeController {
 
     @GetMapping("/me/historico")
     @PreAuthorize("hasRole('CLIENTE')")
-    @Operation(summary = "Retorna o historico de transacoes de pontos")
+    @Operation(summary = "Retorna o historico  de transacoes de pontos")
     public ResponseEntity<java.util.Map<String, Object>> historico(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,

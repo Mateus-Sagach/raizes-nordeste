@@ -1,6 +1,5 @@
 package com.raizes.nordeste.application.pedido;
 
-
 import com.raizes.nordeste.api.dto.request.CriarPedidoRequest;
 import com.raizes.nordeste.api.dto.response.AtualizarStatusResponse;
 import com.raizes.nordeste.api.dto.response.PedidoResponse;
@@ -28,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.raizes.nordeste.infrastructure.repository.PagamentoRepository;
 import com.raizes.nordeste.api.dto.response.PagamentoResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,12 +44,12 @@ public class PedidoService {
     private final PagamentoService pagamentoService;
     private final AuditLogService auditLogService;
     private final PagamentoRepository pagamentoRepository;
-
+    private final RegraDesconto regraDesconto;
 
     @Transactional
     public PedidoResponse criarPedido(CriarPedidoRequest req,
                                       Usuario cliente) {
-        //records do java geram metodos getters sem o prefixo get usasse apenas req.unidadeId() ao inves de req.getUnidadeId()
+        //records do java ja geram metodos getters sem o prefixo get usasse apenas req.unidadeId() ao inves de req.getUnidadeId()
         Unidade unidade = unidadeRepository
                 .findByIdAndAtivoTrue(req.unidadeId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
@@ -85,6 +85,14 @@ public class PedidoService {
 
         pedido.setItens(itens);
         pedido.calcularTotal();
+
+        /* Ponto de extensao para regras de desconto/campanhas futuras
+         A implementacao atual (RegraDesconto.SemDesconto) sempre retorna ZERO, entao o saldoPontos ainda nao precisa de integracao real com a Fidelidade
+        Uma campanha futura poderia implementar RegraDesconto sem altera nenhuma linha deste service */
+        BigDecimal desconto = regraDesconto.calcularDesconto(
+                pedido.getTotal(), 0);
+        pedido.setTotal(pedido.getTotal().subtract(desconto));
+
         pedidoRepository.save(pedido);
 
         auditLogService.registrar(
@@ -99,13 +107,13 @@ public class PedidoService {
                 .findById(pedido.getId())
                 .orElseThrow();
 
-        // Busca o pagamento diretamente pelo pedidoId
+        //Busca o pagamento diretamente pelo pedidoId
         PagamentoResponse pagamentoResponse = pagamentoRepository
                 .findByPedidoId(pedido.getId())
                 .map(PagamentoResponse::from)
                 .orElse(null);
 
-        // Monta a resposta com o pagamento incluido
+        // Monta a resposta com o pagamento incluido junto
         return new PedidoResponse(
                 pedidoAtualizado.getId(),
                 pedidoAtualizado.getCanalPedido().name(),
@@ -129,13 +137,13 @@ public class PedidoService {
 
         if (canal != null && status != null) {
             return pedidoRepository
-                    .findByCanalPedidoAndStatus(canal, status, pageable)
+                     .findByCanalPedidoAndStatus(canal, status, pageable)
                     .map(PedidoResponse::from);
         }
         if (canal != null) {
             return pedidoRepository
                     .findByCanalPedido(canal, pageable)
-                    .map(PedidoResponse::from);
+                     .map(PedidoResponse::from);
         }
         if (status != null) {
             return pedidoRepository
@@ -145,11 +153,11 @@ public class PedidoService {
         if (unidadeId != null) {
             return pedidoRepository
                     .findByUnidadeId(unidadeId, pageable)
-                    .map(PedidoResponse::from);
+                     .map(PedidoResponse::from);
         }
 
         return pedidoRepository
-                .findAll(pageable)
+                 .findAll(pageable)
                 .map(PedidoResponse::from);
     }
 

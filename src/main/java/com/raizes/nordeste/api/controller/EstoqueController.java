@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping("/estoque")
 @RequiredArgsConstructor
 @Tag(name = "Estoque",
-        description = "Controle de estoque por unidade")
+        description = "Controle de estoque por  unidade")
 @SecurityRequirement(name = "bearerAuth")
 public class EstoqueController {
 
@@ -56,7 +56,7 @@ public class EstoqueController {
 
     @PostMapping("/entrada")
     @PreAuthorize("hasAnyRole('GERENTE','ADMIN')")
-    @Operation(summary = "Registra entrada de mercadoria no estoque")
+    @Operation(summary = "Registra entrada de mercadoria  no estoque")
     public ResponseEntity<EstoqueResponse> registrarEntrada(
             @RequestBody @Valid EntradaEstoqueRequest req,
             @AuthenticationPrincipal UserDetails userDetails) {

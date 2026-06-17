@@ -97,7 +97,7 @@ public class PedidoController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('CLIENTE','ATENDENTE','GERENTE','ADMIN')")
-    @Operation(summary = "Cancela um pedido")
+    @Operation(summary = "Cancela  um pedido")
     public ResponseEntity<PedidoResponse> cancelar(
             @PathVariable Long id,
             @RequestBody @Valid CancelarPedidoRequest req,

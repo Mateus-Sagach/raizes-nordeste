@@ -8,15 +8,15 @@ import java.util.Optional;
 
 public interface UnidadeRepository extends JpaRepository<Unidade, Long> {
 
-    //Busca todas as unidades ativas
+    //Busca todas as  unidades ativas
     // Spring gera: SELECT * FROM unidades WHERE ativo = true
     List<Unidade> findByAtivoTrue();
 
-    // Busca unidades ativas de uma cidade especificada
-    //Spring gera: SELECT * FROM unidades WHERE cidade = ? AND ativo = true
+    // Busca unidades  ativas de uma cidade especificada
+    // O Spring vai gera: SELECT * FROM unidades WHERE cidade = ? AND ativo = true
     List<Unidade> findByCidadeAndAtivoTrue(String cidade);
 
     // Busca unidade ativa pelo id
-    //Usado para garantir que nao vai buscar unidades desativadas
+    //Usado para garantir que nao vai buscar unidadess  desativadas
     Optional<Unidade> findByIdAndAtivoTrue(Long id);
 }

@@ -19,7 +19,7 @@ public record PagamentoResponse(
                 pagamento.getFormaPagamento().name(),
                 pagamento.getStatus().name(),
                 pagamento.getValor(),
-                pagamento.getGatewayRef(),
+                 pagamento.getGatewayRef(),
                 pagamento.getCreatedAt()
         );
     }

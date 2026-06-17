@@ -23,7 +23,7 @@ public record PedidoResponse(
                 pedido.getTotal(),
                 pedido.getItens().stream()
                         .map(ItemPedidoResponse::from)
-                        .toList(),
+                         .toList(),
                 pedido.getPagamento() != null
                         ? PagamentoResponse.from(pedido.getPagamento())
                         : null,

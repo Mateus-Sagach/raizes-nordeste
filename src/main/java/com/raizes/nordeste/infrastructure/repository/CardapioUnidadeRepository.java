@@ -10,11 +10,11 @@ public interface CardapioUnidadeRepository
         extends JpaRepository<CardapioUnidade, Long> {
 
     // Buscara todos os itens do cardapio de uma unidade especifica
-    //usar no endpoint GET /unidades/{id}/cardapio
+    //usar no  endpoint  GET /unidades/{id}/cardapio
     List<CardapioUnidade> findByUnidadeIdAndDisponivelTrue(Long unidadeId);
 
     // Busca um produto especifico no cardapio de uma unidade
-    //Usado na criacao do pedido para pegar o preco local
+    //Usado  na criacao do pedido para pegar o preco local
     Optional<CardapioUnidade> findByUnidadeIdAndProdutoIdAndDisponivelTrue(
             Long unidadeId, Long produtoId);
 }

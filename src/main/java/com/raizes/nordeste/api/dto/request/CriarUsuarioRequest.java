@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 public record CriarUsuarioRequest(
 
         @NotBlank(message = "Nome e obrigatorio")
-        @Size(min = 2, max = 150, message = "Nome deve ter entre 2 e 150 caracteres")
+        @Size(min = 2, max = 150, message = "Nome deve ter entre  2 e 150 caracteres")
         String nome,
 
         @NotBlank(message = "Email e obrigatorio")
@@ -18,12 +18,12 @@ public record CriarUsuarioRequest(
         String email,
 
         @NotBlank(message = "Senha e obrigatoria")
-        @Size(min = 6, message = "Senha deve ter no minimo 6 caracteres")
+        @Size(min = 6, message = "Senha  deve ter no minimo 6 caracteres")
         String senha,
 
-        @NotNull(message = "Perfil e obrigatorio")
+        @NotNull(message = "Perfil e  obrigatorio")
         PerfilUsuario perfil,
 
-        @NotNull(message = "Consentimento LGPD e obrigatorio")
+        @NotNull(message = "Consentimento  LGPD e obrigatorio")
         Boolean consentimentoLgpd
 ) {}
