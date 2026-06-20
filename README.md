@@ -166,31 +166,40 @@ Regra do pagamento mock:
 
 ---
 
-## Como rodar  os testes com Postman
+## Como rodar os testes com Postman
 
-### 1. Importe o  arquivo de coleção
+### 1. Importe os arquivos
+
+No Postman, clique em "Import" e selecione os dois arquivos:
+
 postman/raizes-nordeste.postman_collection.json
+postman/raizes-nordeste.postman_environment.json
 
-### 2. Configure o  ambiente
+### 2. Selecione o ambiente "Local"
 
-Crie um ambiente chamado "Local" com as variaveis:
-base_url      = http://localhost:8080
-token         = (preenchido automaticamente)
-token_cliente = (preenchido automaticamente)
-token_gerente = (preenchido automaticamente)
+No canto superior direito do Postman, no dropdown de ambientes,
+selecione "Local" (foi importado junto com o arquivo acima).
 
-### 3. Execute na  ordem recomendada
-01 - Auth      -> executa primeiro para salvar os tokens
-02 - Pedidos   -> usa token_cliente e token_gerente
-03 - Estoque   -> usa token_gerente
-04 - Fidelidade -> usa token_cliente
-05 - Erros     -> testa cenarios negativos
+Variáveis já configuradas:
+- base_url  = http://localhost:8080
+
+Variáveis preenchidas automaticamente durante a execução dos testes:
+- token, token_cliente , token_gerente
+- pedidoId, pedidoIdStatus
+- email_cliente_teste , email_duplicado_teste, email_gerente_teste
+
+### 3. Execute na ordem recomendada
+
+01 - Auth        -> executa  primeiro para salvar os tokens
+02 - Pedidos      -> usa token_cliente  e token_gerente
+03 - Estoque      -> usa o token_gerente
+04 - Fidelidade   -> usa  token_cliente
+05 - Erros        -> testa cenários   negativos
+06 - Cardapio        -> usa o token_cliente
 
 ### 4. Para rodar todos de uma vez
-Clique com botao direito na collection
--> Run collection
--> Delay: 500ms
--> Run
+
+Clique com botão direito na collection -> Run collection -> Delay: 500ms -> Run
 
 ---
 
