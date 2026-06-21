@@ -172,8 +172,9 @@ Regra do pagamento mock:
 
 No Postman, clique em "Import" e selecione os dois arquivos:
 
-postman/raizes-nordeste.postman_collection.json
-postman/raizes-nordeste.postman_environment.json
+- postman/raizes-nordeste.postman_collection.json
+- postman/Local.postman_environment.json
+
 
 ### 2. Selecione o ambiente "Local"
 
