@@ -214,7 +214,8 @@ public class PedidoService {
                 responsavel,
                 "CANCELAR_PEDIDO",
                 "Pedido",
-                pedido.getId());
+                pedido.getId(),
+                java.util.Map.of("motivo", motivo));
 
         return PedidoResponse.from(pedido);
     }
