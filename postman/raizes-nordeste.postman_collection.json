@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "8f66be4f-7283-4370-80e3-513ab53d3a3f",
-    "name": "Raizes do Nordeste",
+    "_postman_id": "63a01a8c-41c0-4f52-9ecc-3c5ae321fe39",
+    "name": "Raizes do Nordeste Copy",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50135904",
-    "_collection_link": "https://go.postman.co/collection/50135904-8f66be4f-7283-4370-80e3-513ab53d3a3f?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/50135904-63a01a8c-41c0-4f52-9ecc-3c5ae321fe39?source=collection_link"
   },
   "item": [
     {
@@ -63,62 +63,6 @@
               ]
             },
             "description": "Cria um usuário com perfil CLIENTE para os testes.\n\nPré-condições:\n\n- Nenhuma(endpoint público)\n    \n- Email único gerado automaticamente com timestamp  \n    no Pre-request Script para evitar conflitos\n    \n\nResultado esperado :\n\n- 201 Created com dados do usuário criado\n    \n- senhaHash não aparece na resposta"
-          },
-          "response": []
-        },
-        {
-          "name": "Cadastro GERENTE",
-          "event": [
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "const timestamp = new Date().getTime();\r",
-                  "const email = \"gerente.\" + timestamp + \"@raizes.com\";\r",
-                  "pm.environment.set(\"email_gerente_teste\", email);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            },
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Cadastro deve retornar 201\", function() {\r",
-                  "    pm.response.to.have.status(201);\r",
-                  "});"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nome\": \"Gerente Teste\",\r\n  \"email\": \"{{email_gerente_teste}}\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"GERENTE\",\r\n  \"consentimentoLgpd\": false\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/cadastro",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "auth",
-                "cadastro"
-              ]
-            },
-            "description": "Cria um usuário com perfil GERENTE para os testes  \nque exigem perfil operacional.\n\nPré-condições:\n\n- Nenhuma (endpoint público)\n    \n- Email único gerado automaticamente com timestamp  \n    no Pre-request Script para evitar conflitos\n    \n\nResultado esperado:\n\n- 201 Created com dados do usuário criadoo"
           },
           "response": []
         },
@@ -229,7 +173,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"{{email_gerente_teste}}\",\r\n  \"senha\": \"123456\"\r\n}",
+              "raw": "{\n  \"email\": \"gerente@raizes.com\",\n  \"senha\": \"password\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -246,7 +190,7 @@
                 "login"
               ]
             },
-            "description": "Autentica o usuário GERENTE e salva o token_gerente  \nautomaticamente para uso nos testes operacionais.\n\nPré-condições :\n\n- Usuário GERENTE criado pelo Cadastro GERENTE\n    \n- Email disponível na variável email_gerente_teste\n    \n\nResultado esperado :\n\n- 200 OK com accesssToken\n    \n- Variável token_gerente preenchida automaticamente"
+            "description": "Autentica o usuario GERENTE de seed (v10) e salva o  \ntoken_gerente automaticamente para uso nos outros teste\n\nPre-condicoes:\n\n- Usuario GERENTE ja existe via seed ([gerente@raizes.com](https://mailto:gerente@raizes.com))\n    \n\nResultado esperado:\n\n- 200 OK com accessToken\n    \n- Variavel token_gerente preenchida automaticamente"
           },
           "response": []
         },
@@ -1267,6 +1211,67 @@
               ]
             },
             "description": "Tenta mover um pedido CANCELADO para EM_PREPARACAO.  \nVerifica que a máquina de estados rejeita transições inválidas.\n\nPré-condições:\n\n- Token GERENTE válido em token_gerente\n    \n- Variável pedidoIdStatus com pedido já CANCELADO pelo T10\n    \n\nResultado esperado:\n\n- 400 Bad Request\n    \n- error: TRANSICAO_STATUS_INVALIDA\n    \n- Mensagem indicando que a transição não é permitida"
+          },
+          "response": []
+        },
+        {
+          "name": "T16 - Cadastro com perfil nao permitido",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = new Date().getTime();\r",
+                  "const email = \"gerente.\" + timestamp + \"@raizes.com\";\r",
+                  "pm.environment.set(\"email_gerente_teste\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cadastro com perfil GERENTE deve ser bloqueado (403)\", function() {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "pm.test(\"Erro deve ser ACESSO_NEGADO\", function() {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.error).to.equal(\"ACESSO_NEGADO\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Tentativa Indevida\",\n  \"email\": \"{{email_gerente_teste}}\",\n  \"senha\": \"123456\",\n  \"perfil\": \"GERENTE\",\n  \"consentimentoLgpd\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/cadastro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "cadastro"
+              ]
+            },
+            "description": "Tenta se auto-cadastrar publicamente com perfil GERENTE.\n\nPre-condicoes:\n- Nenhuma (endpoint publico)\n- Email unico gerado automaticamente com timestamp\n\nResultado esperado:\n- 403 ACESSO_NEGADO (cadastro publico so permite CLIENTE)\n\nCenario de seguranca: evita que qualquer pessoa se torne\nGERENTE/ADMIN/ATENDENTE/COZINHA via auto-cadastro."
           },
           "response": []
         }

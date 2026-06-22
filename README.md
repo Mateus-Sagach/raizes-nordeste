@@ -1,4 +1,4 @@
-# Raízes do Nordeste — API Back-end
+# Raízes do Nordeste, API Back-end
 
 API REST para gestão de pedidos da rede ficticia de lanchonetes Raízes do Nordeste. Desenvolvida com Spring Boot 
 
@@ -111,10 +111,29 @@ Para autenticar no Swagger:
 Após rodar as migrations, o banco já possui dados
 de teste prontos para usar.
 
-Para criar usuários de teste, use o endpoint:
+### Contas de seed (já existem, prontas pra login)
+
+Por segurança, o cadastro público (`POST /auth/cadastro`)
+permite criar apenas usuários CLIENTE. Perfis de equipe
+(ATENDENTE, COZINHA, GERENTE, ADMIN) não podem ser auto-cadastrados
+, eles já vêm provisionados pelo seed (migrations V10):
+
+| Perfil | Email | Senha |
+|---|---|---|
+| ADMIN | admin@raizes.com | password |
+| GERENTE | gerente@raizes.com | password |
+| COZINHA | cozinha@raizes.com | password |
+| ATENDENTE | balcao@raizes.com | password |
+| CLIENTE | cliente@teste.com | password |
+
+Use `POST /auth/login` com qualquer uma dessas contas para
+obter o token JWT do perfil correspondente.
+
+### Criar um novo CLIENTE
+
+Para criar um novo usuário CLIENTE, use o endpoint:
 `POST /auth/cadastro`
 
-Exemplo de usuário CLIENTE:
 ```json
 {
   "nome": "Cliente Teste",
@@ -125,16 +144,9 @@ Exemplo de usuário CLIENTE:
 }
 ```
 
-Exemplo de usuário GERENTE:
-```json
-{
-  "nome": "Gerente Teste",
-  "email": "gerente@teste.com",
-  "senha": "123456",
-  "perfil": "GERENTE",
-  "consentimentoLgpd": false
-}
-```
+Tentar cadastrar com `"perfil": "GERENTE"` (ou qualquer perfil
+diferente de CLIENTE) retorna `403 ACESSO_NEGADO`, esse é o
+comportamento esperado.
 
 ---
 
@@ -247,14 +259,15 @@ src/main/resources/
 | Método | Rota | Descrição | Perfil |
 |--------|------|-----------|--------|
 | POST | /auth/login | Autentica e  retorna token | Público |
-| POST | /auth/cadastro | Cadastra   novo usuario | Público |
+| POST | /auth/cadastro | Cadastra novo usuario (apenas CLIENTE) | Público |
 | GET | /auth/me | Dados do  usuario logado | Todos |
-| POST | /pedidos | Cria pedido com  canalPedido | CLIENTE ,  ATENDENTE |
-| GET | /pedidos | Lista pedidos com filtros | GERENTE,  ADMIN |
+| POST | /pedidos | Cria pedido com  canalPedido | CLIENTE, ATENDENTE |
+| GET | /pedidos | Lista pedidos com filtros | GERENTE, ADMIN, ATENDENTE, COZINHA |
 | GET | /pedidos/{id} | Detalha  um pedido | Autenticado |
-| PATCH | /pedidos/{id}/status | Atualiza status | COZINHA, GERENTE |
-| DELETE | /pedidos/{id} | Cancela  pedido | CLIENTE, GERENTE |
-| GET | /estoque | Consulta estoque da unidade | GERENTE, ATENDENTE |
+| GET | /unidades/{id}/cardapio | Consulta cardapio disponivel | Autenticado |
+| PATCH | /pedidos/{id}/status | Atualiza status | COZINHA, ATENDENTE, GERENTE, ADMIN |
+| DELETE | /pedidos/{id} | Cancela  pedido | CLIENTE, ATENDENTE, GERENTE, ADMIN |
+| GET | /estoque | Consulta estoque da unidade | GERENTE, ADMIN, ATENDENTE |
 | POST | /estoque/entrada | Registra  entrada | GERENTE, ADMIN |
 | GET | /fidelidade/me | Saldo  de pontos | CLIENTE |
 | GET | /fidelidade/me/historico | Historico  de pontos | CLIENTE |

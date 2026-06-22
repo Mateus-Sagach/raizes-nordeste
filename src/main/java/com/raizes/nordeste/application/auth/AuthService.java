@@ -4,17 +4,21 @@ package com.raizes.nordeste.application.auth;
 import com.raizes.nordeste.api.dto.request.CriarUsuarioRequest;
 import com.raizes.nordeste.api.dto.response.LoginResponse;
 import com.raizes.nordeste.api.dto.response.UsuarioResponse;
+
 import com.raizes.nordeste.api.exception.EmailJaCadastradoException;
 import com.raizes.nordeste.api.exception.RecursoNaoEncontradoException;
+import com.raizes.nordeste.domain.enums.PerfilUsuario;
 import com.raizes.nordeste.domain.model.Usuario;
 import com.raizes.nordeste.infrastructure.repository.UsuarioRepository;
 import com.raizes.nordeste.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +57,13 @@ public class AuthService {
 
         if (usuarioRepository.existsByEmail(req.email())) {
             throw new EmailJaCadastradoException(req.email());
+        }
+
+        //O cadastro publico (sem autenticacao no caso) so pode criar contas cliente, Perfis de equipe (atendente, cozinha, adm, etc) sao feitas via seed/administracao,
+        // não é feito por auto-cadastro, para evitar escalacao de privilegios
+        if (req.perfil() != PerfilUsuario.CLIENTE) {
+            throw new AccessDeniedException(
+                    "Cadastro publico permitido apenas para o perfil CLIENTE.");
         }
 
         Usuario usuario = new Usuario();

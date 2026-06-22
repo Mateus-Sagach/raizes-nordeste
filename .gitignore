@@ -18,6 +18,7 @@ target/
 target/
 *.class
 .idea/
+TesteHash.java
 
 ### IntelliJ IDEA ###
 .idea
