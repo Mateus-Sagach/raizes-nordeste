@@ -22,6 +22,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.raizes.nordeste.api.exception.ErroResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +33,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)
@@ -105,13 +108,14 @@ public class SecurityConfig {
         return (request, response, ex) -> {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("""
-                {
-                  "error": "NAO_AUTENTICADO",
-                  "message": "Token ausente ou invalido.",
-                  "path": "%s"
-                }
-                """.formatted(request.getRequestURI()));
+
+            ErroResponse erro = ErroResponse.of(
+                    "NAO_AUTENTICADO",
+                    "Token ausente ou invalido.",
+                    request.getRequestURI());
+
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(erro));
         };
     }
 
@@ -120,13 +124,14 @@ public class SecurityConfig {
         return (request, response, ex) -> {
             response.setContentType("application/json");
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.getWriter().write("""
-                {
-                  "error": "ACESSO_NEGADO",
-                  "message": "Voce nao tem permissao para esta acao.",
-                  "path": "%s"
-                }
-                """.formatted(request.getRequestURI()));
+
+            ErroResponse erro = ErroResponse.of(
+                    "ACESSO_NEGADO",
+                    "Voce nao tem permissao para esta acao.",
+                    request.getRequestURI());
+
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(erro));
         };
     }
 }
