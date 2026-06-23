@@ -75,9 +75,13 @@ public class PedidoController {
     @GetMapping("/{id}")
     @Operation(summary = "Busca um pedido pelo ID")
     public ResponseEntity<PedidoResponse> buscarPorId(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-        return ResponseEntity.ok(pedidoService.buscarPorId(id));
+        Usuario usuario = pedidoService
+                .buscarUsuarioPorEmail(userDetails.getUsername());
+
+        return ResponseEntity.ok(pedidoService.buscarPorId(id, usuario));
     }
 
     @PatchMapping("/{id}/status")

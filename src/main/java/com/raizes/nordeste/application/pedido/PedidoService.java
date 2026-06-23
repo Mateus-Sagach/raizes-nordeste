@@ -26,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.raizes.nordeste.infrastructure.repository.PagamentoRepository;
 import com.raizes.nordeste.api.dto.response.PagamentoResponse;
+import com.raizes.nordeste.domain.enums.PerfilUsuario;
+import org.springframework.security.access.AccessDeniedException;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -162,11 +165,18 @@ public class PedidoService {
     }
 
     @Transactional(readOnly = true)
-    public PedidoResponse buscarPorId(Long id) {
-        return pedidoRepository.findById(id)
-                .map(PedidoResponse::from)
+    public PedidoResponse buscarPorId(Long id, Usuario solicitante) {
+        Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() ->
                         new RecursoNaoEncontradoException("Pedido", id));
+
+        if (solicitante.getPerfil() == PerfilUsuario.CLIENTE
+                && !pedido.getCliente().getId().equals(solicitante.getId())) {
+            throw new AccessDeniedException(
+                    "Voce so pode consultar os proprios pedidos.");
+        }
+
+        return PedidoResponse.from(pedido);
     }
 
     @Transactional
@@ -207,7 +217,14 @@ public class PedidoService {
                 .orElseThrow(() ->
                         new RecursoNaoEncontradoException("Pedido", id));
 
+        if (responsavel.getPerfil() == PerfilUsuario.CLIENTE
+                && !pedido.getCliente().getId().equals(responsavel.getId())) {
+            throw new AccessDeniedException(
+                    "Voce so pode cancelar os proprios pedidos.");
+        }
+
         pedido.cancelar();
+
         pedidoRepository.save(pedido);
 
         auditLogService.registrar(
