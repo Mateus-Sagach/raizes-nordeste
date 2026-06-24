@@ -5,7 +5,9 @@ import com.raizes.nordeste.api.dto.request.EntradaEstoqueRequest;
 import com.raizes.nordeste.api.dto.response.EstoqueResponse;
 import com.raizes.nordeste.api.exception.EstoqueInsuficienteException;
 import com.raizes.nordeste.api.exception.EstoqueNaoEncontradoException;
+import com.raizes.nordeste.api.exception.RecursoNaoEncontradoException;
 import com.raizes.nordeste.application.audit.AuditLogService;
+import com.raizes.nordeste.infrastructure.repository.UnidadeRepository;
 import com.raizes.nordeste.domain.model.Estoque;
 import com.raizes.nordeste.domain.model.Usuario;
 import com.raizes.nordeste.infrastructure.repository.EstoqueRepository;
@@ -21,6 +23,7 @@ public class EstoqueService {
 
     private final EstoqueRepository estoqueRepository;
     private final AuditLogService auditLogService;
+    private final UnidadeRepository unidadeRepository;
 
     @Transactional(readOnly = true)
     public void validarDisponibilidade(Long unidadeId,
@@ -66,6 +69,11 @@ public class EstoqueService {
 
     @Transactional(readOnly = true)
     public List<EstoqueResponse> buscarPorUnidade(Long unidadeId) {
+
+        if (!unidadeRepository.existsById(unidadeId)) {
+            throw new RecursoNaoEncontradoException("Unidade", unidadeId);
+        }
+
         return estoqueRepository
                 .findByUnidadeId(unidadeId)
                 .stream()
@@ -76,6 +84,11 @@ public class EstoqueService {
     @Transactional(readOnly = true)
     public List<EstoqueResponse> buscarItensAbaixoDoMinimo(
             Long unidadeId) {
+
+        if (!unidadeRepository.existsById(unidadeId)) {
+            throw new RecursoNaoEncontradoException("Unidade", unidadeId);
+        }
+
         return estoqueRepository
                 .findItensAbaixoDoMinimo(unidadeId)
                 .stream()

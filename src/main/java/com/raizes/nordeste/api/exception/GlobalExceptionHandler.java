@@ -174,4 +174,17 @@ public class GlobalExceptionHandler {
                         ex.getMessage(),
                         request.getRequestURI()));
     }
+
+    @ExceptionHandler(EstoqueNaoEncontradoException.class)
+    public ResponseEntity<ErroResponse> handleEstoqueNaoEncontrado(
+            EstoqueNaoEncontradoException ex,
+            HttpServletRequest request) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErroResponse.of(
+                        "ESTOQUE_NAO_ENCONTRADO",
+                        ex.getMessage(),
+                        request.getRequestURI()));
+    }
 }
