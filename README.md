@@ -137,7 +137,7 @@ Para criar um novo usuário CLIENTE, use o endpoint:
 ```json
 {
   "nome": "Cliente Teste",
-  "email": "cliente@teste.com",
+  "email": "cliente123@teste.com",
   "senha": "123456",
   "perfil": "CLIENTE",
   "consentimentoLgpd": true
