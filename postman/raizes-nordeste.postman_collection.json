@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "63a01a8c-41c0-4f52-9ecc-3c5ae321fe39",
-    "name": "Raizes do Nordeste Copy",
+    "name": "Raizes do Nordeste",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50135904",
     "_collection_link": "https://go.postman.co/collection/50135904-63a01a8c-41c0-4f52-9ecc-3c5ae321fe39?source=collection_link"
@@ -201,6 +201,10 @@
               "listen": "test",
               "script": {
                 "exec": [
+                  "pm.test(\"Login CLIENTE deve retornar 200\", function() {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
                   "if (pm.response.code === 200) {\r",
                   "    const resposta = pm.response.json();\r",
                   "    pm.environment.set(\"token_cliente\", resposta.accessToken);\r",
