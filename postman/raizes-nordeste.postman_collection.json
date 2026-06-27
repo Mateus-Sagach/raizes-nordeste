@@ -1123,7 +1123,7 @@
               "script": {
                 "exec": [
                   "pm.test(\"Deve retornar 409 ou 500\", function() {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([409, 500]);\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([409]);\r",
                   "});"
                 ],
                 "type": "text/javascript",
