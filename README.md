@@ -59,6 +59,7 @@ Copie o arquivo de exemplo:
 ```bash
 cp .env.example .env
 ```
+Ou pela pasta do arquivo copie o arquivo e mude o nome
 
 Abra o arquivo `.env` e preencha com suas credenciais:
 
