@@ -1122,7 +1122,7 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Deve retornar 409 ou 500\", function() {\r",
+                  "pm.test(\"Deve retornar 409\", function() {\r",
                   "    pm.expect(pm.response.code).to.be.oneOf([409]);\r",
                   "});"
                 ],
